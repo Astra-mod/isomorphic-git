@@ -2,9 +2,13 @@ import { InternalError } from '../errors/InternalError.js'
 
 export class GitObject {
   static wrap({ type, object }) {
+    // This is a quick and dirty fix
+    const objectWithoutCRLF = Buffer.from(object.toString("utf8")
+      .replace(new RegExp("\x0D\x0A", 'g'), "\x0A"))
+
     return Buffer.concat([
-      Buffer.from(`${type} ${object.byteLength.toString()}\x00`),
-      Buffer.from(object),
+      Buffer.from(`${type} ${objectWithoutCRLF.byteLength.toString()}\x00`),
+      Buffer.from(objectWithoutCRLF),
     ])
   }
 
